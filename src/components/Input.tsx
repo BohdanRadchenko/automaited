@@ -4,6 +4,7 @@ export enum EInputType {
   TEXT = "text",
   EMAIL = "email",
   CHECKBOX = "checkbox",
+  RADIO = "radio",
 }
 
 export type TInputProps = {
@@ -12,6 +13,7 @@ export type TInputProps = {
   type?: string;
   autoComplete?: string;
   customClass?: string;
+  value?: string;
 };
 
 export const Input = memo(

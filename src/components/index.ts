@@ -11,3 +11,6 @@ export type { TSelectProps, TOption } from "./Select";
 
 export { Checkbox } from "./Checkbox";
 export type { TCheckboxProps } from "./Checkbox";
+
+export { RadioButton } from "./RadioButton";
+export type { TRadioButtonProps } from "./RadioButton";

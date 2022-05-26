@@ -1,24 +1,38 @@
 import React, { memo } from "react";
 
-export enum InputType {
+export enum EInputType {
   TEXT = "text",
+  EMAIL = "email",
+  CHECKBOX = "checkbox",
 }
 
-export type TInputType = {
+export type TInputProps = {
   name: string;
   id?: string;
   type?: string;
+  autoComplete?: string;
+  customClass?: string;
 };
 
 export const Input = memo(
-  ({ type = InputType.TEXT, name, id = "" }: TInputType) => {
+  ({
+    type = EInputType.TEXT,
+    name,
+    id = "",
+    autoComplete = "",
+    customClass = "",
+  }: TInputProps) => {
     return (
       <input
         type={type}
         name={name}
         id={id ?? name}
-        autoComplete={name}
-        className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+        autoComplete={autoComplete ?? name}
+        className={
+          customClass
+            ? customClass
+            : "shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+        }
       />
     );
   }

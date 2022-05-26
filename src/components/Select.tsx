@@ -1,5 +1,7 @@
 import React, { memo, useCallback } from "react";
 
+export type TSelectChangeEvent = React.ChangeEvent<HTMLSelectElement>;
+
 export type TOption = {
   id?: string | number;
   name: string;
@@ -11,16 +13,35 @@ export type TSelectProps = {
   name: string;
   autoComplete?: string;
   options?: TOption[];
+  selected?: TOption;
+  onChange: (e: TSelectChangeEvent) => void;
 };
 
 export const Select = memo(
-  ({ id = "", name, autoComplete = "", options = [] }: TSelectProps) => {
+  ({
+    id = "",
+    name,
+    autoComplete = "",
+    options = [],
+    selected,
+    onChange,
+  }: TSelectProps) => {
     const createOptionId = useCallback(
       (id: TOption["id"], value: TOption["value"]) => `option-${id}-${value}`,
       []
     );
+
+    const handleChange = useCallback(
+      (e: TSelectChangeEvent) => {
+        onChange && onChange(e);
+      },
+      [onChange]
+    );
+
     return (
       <select
+        value={selected ? selected.value : options[0].value}
+        onChange={handleChange}
         id={id ?? name}
         name={name}
         autoComplete={autoComplete ?? name}
@@ -28,7 +49,9 @@ export const Select = memo(
       >
         {Boolean(options?.length) &&
           options.map(({ id, name, value }, i) => (
-            <option key={createOptionId(id ?? i, value)}>{name}</option>
+            <option key={createOptionId(id ?? i, value)} value={value}>
+              {name}
+            </option>
           ))}
       </select>
     );

@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 
 export enum EInputType {
   TEXT = "text",
@@ -7,6 +7,8 @@ export enum EInputType {
   RADIO = "radio",
 }
 
+export type TInputChangeEvent = React.ChangeEvent<HTMLInputElement>;
+
 export type TInputProps = {
   name: string;
   id?: string;
@@ -14,6 +16,8 @@ export type TInputProps = {
   autoComplete?: string;
   customClass?: string;
   value?: string;
+  onChange?: (e: TInputChangeEvent) => void;
+  checked?: boolean;
 };
 
 export const Input = memo(
@@ -23,9 +27,22 @@ export const Input = memo(
     id = "",
     autoComplete = "",
     customClass = "",
+    onChange,
+    value,
+    checked = false,
   }: TInputProps) => {
+    const handleChange = useCallback(
+      (e: TInputChangeEvent) => {
+        onChange && onChange(e);
+      },
+      [onChange]
+    );
+
     return (
       <input
+        checked={checked}
+        value={value}
+        onChange={handleChange}
         type={type}
         name={name}
         id={id ?? name}

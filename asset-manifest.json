@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/automaited/static/css/main.e6c13ad2.css",
+    "main.js": "/automaited/static/js/main.26755eb5.js",
+    "static/js/787.4ec58f06.chunk.js": "/automaited/static/js/787.4ec58f06.chunk.js",
+    "index.html": "/automaited/index.html",
+    "main.e6c13ad2.css.map": "/automaited/static/css/main.e6c13ad2.css.map",
+    "main.26755eb5.js.map": "/automaited/static/js/main.26755eb5.js.map",
+    "787.4ec58f06.chunk.js.map": "/automaited/static/js/787.4ec58f06.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.26755eb5.js"
+  ]
+}

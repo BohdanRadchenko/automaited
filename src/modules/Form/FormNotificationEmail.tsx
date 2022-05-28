@@ -36,8 +36,8 @@ export const FormNotificationEmail = memo(
 
     const handleChange = useCallback(
       (e: TInputChangeEvent) => {
-        const { name, checked } = e.target;
-        onChange && onChange({ name, value: checked });
+        const { name, checked, type } = e.target;
+        onChange && onChange({ name, value: checked, type });
       },
       [onChange]
     );

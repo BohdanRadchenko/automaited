@@ -39,8 +39,8 @@ export const FormNotificationPush = memo(
 
     const handleChange = useCallback(
       (e: TInputChangeEvent) => {
-        const { name, value } = e.target;
-        onChange && onChange({ name, value });
+        const { name, value, type } = e.target;
+        onChange && onChange({ name, value, type });
       },
       [onChange]
     );

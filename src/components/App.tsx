@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import {
   Form,
   FormUserNameInput,
@@ -15,11 +15,12 @@ import {
 } from "../modules/Form";
 import { FormNotificationPush } from "../modules/Form/FormNotificationPush";
 import { FormSelectExtra } from "../modules/Form/FormSelectExtra";
-import { useDebounceLog } from "../hooks";
+import { useDebounceLog, usePrevState } from "../hooks";
 
 export type TInputChangeParams = {
   name: string;
   value: string | number | boolean;
+  type?: string;
 };
 
 export type TForm = {
@@ -55,6 +56,7 @@ const defaultForm: TForm = {
   comments: false,
   candidates: false,
   offers: false,
+  age: 28,
 };
 
 const mockForm: TForm = {
@@ -67,8 +69,11 @@ const mockForm: TForm = {
   age: 37,
 };
 
+const typeExceptions = ["select", "radio", "checkbox"];
+
 const App = () => {
   const [form, setForm] = useState<TForm>(defaultForm);
+  const prevState = usePrevState<TForm>(form);
 
   const { log } = useDebounceLog<TForm>(form);
 
@@ -76,22 +81,54 @@ const App = () => {
     console.log("form", form);
   }, [form]);
 
+  const getChangedState = useCallback(
+    (prev: TForm, state: TForm) => {
+      console.log("===========");
+      const logArray = Object.entries(state).reduce(
+        (acc, [name, value]) => {
+          Object.keys(prev).forEach((k) => {
+            if (
+              { ...state }.hasOwnProperty(name) &&
+              { ...prev }.hasOwnProperty(name)
+            ) {
+              if (k !== name) return;
+              const key = k as keyof TForm;
+              if (state[key] === prev[key]) return;
+              acc = [...acc, { name, value }];
+            }
+          });
+          return acc;
+        },
+        [] as Array<{
+          name: string;
+          value: [keyof TForm] | string | number | boolean;
+        }>
+      );
+
+      logArray.forEach((el) => log(el.name as keyof TForm, 0));
+    },
+    [log]
+  );
+
   const handleChange = useCallback(
-    ({ name, value }: TInputChangeParams) => {
+    ({ name, value, type }: TInputChangeParams) => {
       setForm({ ...form, [name]: value });
-      log(name as keyof TForm);
+      const debounceTime = type && typeExceptions.includes(type) ? 0 : null;
+      log(name as keyof TForm, debounceTime);
     },
     [form, log]
   );
 
-  const handleAutomate = useCallback(
-    () => setForm({ ...defaultForm, ...form, ...mockForm }),
-    [form]
-  );
+  const handleAutomate = useCallback(() => {
+    const newDate = { ...form, ...mockForm };
+    setForm(newDate);
+    getChangedState(prevState, newDate);
+  }, [form, prevState, getChangedState]);
 
   const handleCancel = useCallback(() => {
     setForm(defaultForm);
-  }, []);
+    getChangedState(prevState, defaultForm);
+  }, [prevState, getChangedState]);
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 my-8">

@@ -27,7 +27,7 @@ export const FormSelectExtra = memo(
     const handleChange = useCallback(
       ({ target }: SelectChangeEvent) => {
         const { name, value } = target;
-        onChange && onChange({ name, value: value });
+        onChange && onChange({ name, value: value, type: "select" });
       },
       [onChange]
     );

@@ -7,10 +7,10 @@ export const useDebounceLog = <T>(form: T) => {
   const formRef = useRef<T>(form);
 
   const log = useCallback(
-    (name: keyof T) => {
+    (name: keyof T, timeout: number | null = null) => {
       const debounced = debounce(() => {
-        console.log("CHANGED", name, formRef.current[name]);
-      }, DEBOUNCED_TIME);
+        console.log("CHANGED", `${name.toString()}:`, formRef.current[name]);
+      }, timeout ?? DEBOUNCED_TIME);
       debounced();
     },
     [formRef]

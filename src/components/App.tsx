@@ -15,6 +15,7 @@ import {
 } from "../modules/Form";
 import { FormNotificationPush } from "../modules/Form/FormNotificationPush";
 import { FormSelectExtra } from "../modules/Form/FormSelectExtra";
+import { useDebounceLog } from "../hooks";
 
 export type TInputChangeParams = {
   name: string;
@@ -69,6 +70,8 @@ const mockForm: TForm = {
 const App = () => {
   const [form, setForm] = useState<TForm>(defaultForm);
 
+  const { log } = useDebounceLog<TForm>(form);
+
   const handleSubmit = useCallback(() => {
     console.log("form", form);
   }, [form]);
@@ -76,14 +79,19 @@ const App = () => {
   const handleChange = useCallback(
     ({ name, value }: TInputChangeParams) => {
       setForm({ ...form, [name]: value });
+      log(name as keyof TForm);
     },
-    [form]
+    [form, log]
   );
 
   const handleAutomate = useCallback(
-    () => setForm({ ...defaultForm, ...mockForm }),
-    []
+    () => setForm({ ...defaultForm, ...form, ...mockForm }),
+    [form]
   );
+
+  const handleCancel = useCallback(() => {
+    setForm(defaultForm);
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 my-8">
@@ -99,6 +107,7 @@ const App = () => {
               Automate!
             </button>,
             <button
+              onClick={handleCancel}
               type="button"
               className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >

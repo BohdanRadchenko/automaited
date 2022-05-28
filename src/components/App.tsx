@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import {
   Form,
   FormUserNameInput,
@@ -73,14 +73,17 @@ const typeExceptions = ["select", "radio", "checkbox"];
 
 const App = () => {
   const [form, setForm] = useState<TForm>(defaultForm);
-  const prevState = usePrevState<TForm>(form);
+  const { prevState } = usePrevState<TForm>(form);
 
-  const { log } = useDebounceLog<TForm>(form);
+  const { debounced } = useDebounceLog<TForm>(form);
 
   const handleSubmit = useCallback(() => {
     console.log("form", form);
   }, [form]);
 
+  // TODO: функция нужна для отслеживания изменений в стейте, вывода текущих изменений в массив, и перебором вызова дебоунса с логом
+  // TODO: функция вызывается ТОЛЬКО если изменился стейт родительский без вызова changeEvent`а дочерних
+  // TODO: НЕЛЬЗЯ вызывать ту же функцию, что и HTMLInput chanceEvent ибо ее нужно вызывать в useEffecte внутри компонета (допустим <FormUserNameInput/>), так изменение пропа внутри вызывает изменение стейта родительского компонента - рекурсия
   const getChangedState = useCallback(
     (prev: TForm, state: TForm) => {
       console.log("===========");
@@ -105,18 +108,21 @@ const App = () => {
         }>
       );
 
-      logArray.forEach((el) => log(el.name as keyof TForm, 0));
+      logArray.forEach((el) => debounced(el.name as keyof TForm, 0));
     },
-    [log]
+    [debounced]
   );
 
   const handleChange = useCallback(
     ({ name, value, type }: TInputChangeParams) => {
       setForm({ ...form, [name]: value });
+
+      // TODO: установка дебонса ТОЛЬКО для инпута тайп текст
       const debounceTime = type && typeExceptions.includes(type) ? 0 : null;
-      log(name as keyof TForm, debounceTime);
+      // TODO: функция дебоунс, которая вызывается каждый раз при вызовы ивент ченджа на импуте/радио/чекбоксе ...
+      debounced(name as keyof TForm, debounceTime);
     },
-    [form, log]
+    [form, debounced]
   );
 
   const handleAutomate = useCallback(() => {
